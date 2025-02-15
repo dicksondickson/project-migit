@@ -259,7 +259,7 @@ We need to edit FastSDCPU so we can access the webui from any computer in our ne
 nano src/frontend/webui/ui.py
 ```
 
-Scroll all the way to the bottom and edit the ‘webui.launch’ paramenter:
+Scroll all the way to the bottom and edit the ‘webui.launch’ parameter:
 ```python
 webui.launch(share=share,server_name="0.0.0.0")
 ```
