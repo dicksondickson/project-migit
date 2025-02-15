@@ -8,6 +8,9 @@ In this guide, I'll be using a 7th gen NUC (NUC7i7DNKE) released back in 2018. I
 
 I have Ubuntu-based Pop!_OS, Ollama, OpenWebUI, and KokoroTTS running on this machine, and it is completely usable with smaller models.
 
+![Alt text](nuc.jpg)
+
+
 ### Models Tested
 
 Here are the models I've tested with their performance metrics:
