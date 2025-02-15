@@ -157,7 +157,16 @@ Access OpenWebUI:
 - Open your web browser and go to `http://[your-computer-name]:3000/`
 - Create an admin account
 
-### 8. Download Models
+### 8. Connect OpenWebUI to Ollama
+
+1. Go to Settings > Admin Settings > Connections > Manage Ollama API Connections.
+
+2. Add http://host.docker.internal:11434 and save your settings.
+
+![Alt text](connect.png)
+
+
+### 9. Download Models
 
 You can download and manage Ollama's models directly in OpenWebUI.
 
@@ -169,7 +178,7 @@ You can find more models at: https://ollama.com/search
 ![Alt text](ow-1.png)
 
 
-### 9. Set Up Text-to-Speech
+### 10. Set Up Text-to-Speech
 
 OpenWebUI already have basic built-in text-to-speech and the better Kokoro.js. However, Kokoro.js is kind of slow. We’ll be setting up Kokoro-FastAPI for fast CPU inference.
 
