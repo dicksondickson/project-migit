@@ -1,4 +1,4 @@
-# Project Migit - AI Server on a Potato
+# Project MIGIT - AI Server on a Potato
 
 ## What is this?
 
