@@ -8,7 +8,7 @@ In this guide, I'll be using a 7th gen NUC (NUC7i7DNKE) released back in 2018. I
 
 I have Ubuntu-based Pop!_OS, Ollama, OpenWebUI, and KokoroTTS running on this machine, and it is completely usable with smaller models.
 
-![Alt text](nuc.jpg)
+![Alt text](images/nuc.jpg)
 
 
 ### Models Tested
@@ -33,6 +33,8 @@ The reasoning models are hit or miss at 1.5B. DeepScaler is surprisingly usable,
 - LCM OpenVINO + TAESD: 1.73s/it
 - 2.5 sec per image at 512x512
 
+***
+
 ## Let's Do This!
 
 ### 1. Install Pop!_OS
@@ -52,19 +54,21 @@ sudo apt upgrade
 1. Disable system suspend:
    - Go to Settings > Power > Automatic suspend (turn it off)
 
-![Alt text](sys-2.png)
+![Alt text](images/sys-2.png)
 
 2. Rename system:
    - Go to Settings > About > Device name
    - I'm naming mine "migit"
 
-![Alt text](sys-1.png)
+![Alt text](images/sys-1.png)
 
 ### 4. Install Python Packages
 ```bash
 sudo apt install python-is-python3 python3-pip python3-venv
 pip3 install --upgrade pip
 ```
+
+***
 
 ### 5. Install Ollama
 ```bash
@@ -87,7 +91,7 @@ Add these lines in the indicated section:
 Environment="OLLAMA_HOST=0.0.0.0"
 ```
 
-![Alt text](ol-1.png)
+![Alt text](images/ol-1.png)
 
 Restart Ollama service:
 ```bash
@@ -95,10 +99,13 @@ systemctl daemon-reload
 systemctl restart ollama
 ```
 
+***
+
 ### 6. Install Docker Engine
 
 Add Docker's official GPG key:
 ```bash
+# Add Docker's official GPG key:
 sudo apt-get update
 sudo apt-get install ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -108,11 +115,11 @@ sudo chmod a+r /etc/apt/keyrings/docker.asc
 
 Add the repository to Apt sources:
 ```bash
+# Add the repository to Apt sources:
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
 sudo apt-get update
 ```
 
@@ -126,25 +133,33 @@ Test Docker installation:
 sudo docker run hello-world
 ```
 
+Add yourself to the docker group so you don't need to type 'sudo' all the time:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
 Clean up Docker images and containers:
 ```bash
 # Remove stopped containers
-sudo docker container prune
+docker container prune
 
 # Remove unused images
-sudo docker image prune -a
+docker image prune -a
 ```
+
+***
 
 ### 7. Install OpenWebUI
 
 Pull the latest Open WebUI Docker image:
 ```bash
-sudo docker pull ghcr.io/open-webui/open-webui:main
+docker pull ghcr.io/open-webui/open-webui:main
 ```
 
 Run OpenWebUI container:
 ```bash
-sudo docker run -d \
+docker run -d \
   -p 3000:8080 \
   --add-host=host.docker.internal:host-gateway \
   -v open-webui:/app/backend/data \
@@ -163,7 +178,7 @@ Access OpenWebUI:
 
 2. Add http://host.docker.internal:11434 and save your settings.
 
-![Alt text](connect.png)
+![Alt text](images/connect.png)
 
 
 ### 9. Download Models
@@ -175,16 +190,17 @@ You can download and manage Ollama's models directly in OpenWebUI.
 
 You can find more models at: https://ollama.com/search
 
-![Alt text](ow-1.png)
+![Alt text](images/ow-1.png)
 
+***
 
-### 10. Set Up Text-to-Speech
+### 10. Set Up KokoroTTS-FastAPI for Text-to-Speech
 
 OpenWebUI already have basic built-in text-to-speech and the better Kokoro.js. However, Kokoro.js is kind of slow. We’ll be setting up Kokoro-FastAPI for fast CPU inference.
 
 Install Kokoro-FastAPI:
 ```bash
-sudo docker run -d \
+docker run -d \
   -p 8880:8880 \
   --add-host=host.docker.internal:host-gateway \
   --name kokorotts-fastapi \
@@ -203,11 +219,17 @@ Configure OpenWebUI for Text-to-Speech:
 
 Kokoro-FastAPI also have a webui where you can test the available voices. Test available voices at `http://[your-computer-name]:8880/web/`
 
-## BONUS Features!
+***
 
-### System Resource Monitoring
+# BONUS Features!
+
+### System Resource Monitoring with btop
 
 You can monitor your AI server resources remotely via SSH and using btop.
+
+Repo: https://github.com/aristocratos/btop
+
+![Alt text](images/btop.png)
 
 Install btop for system monitoring:
 ```bash
@@ -224,7 +246,9 @@ btop
 ```
 
 
-### Monitor your AI Server Remotely
+### Monitor your AI Server Remotely vis SSH
+
+
 
 Install SSH server:
 ```bash
@@ -239,11 +263,15 @@ ssh user@[your-computer-name]
 
 Then run btop.
 
-![Alt text](btop.png)
+
+
+***
 
 ### Image Generation with FastSDCPU
 
 We can also run FastSDCPU on our AI server to generate images as well. Unfortunately, the API is not compatible with OpenWebUI, but FastSDCPU have it’s own webui.
+
+Repo: https://github.com/rupeshs/fastsdcpu
 
 Install FastSDCPU:
 ```bash
@@ -264,7 +292,7 @@ Scroll all the way to the bottom and edit the ‘webui.launch’ parameter:
 webui.launch(share=share,server_name="0.0.0.0")
 ```
 
-![Alt text](fastsd-3.png)
+![Alt text](images/fastsd-3.png)
 
 Make sure you are at the root of FastSDCPU directory and run:
 ```bash
@@ -285,32 +313,42 @@ Note: Required models will download automatically on first run, which may take s
 
 You should now have a painting of a cat!
 
-![Alt text](cat.jpg)
+![Alt text](images/cat.jpg)
 
-Hope you found this useful. Have fun!
+***
+
+## Access Your AI Server Securely on the Internet with Tailscale!
+
+Tailscale is a zero-config VPN service that creates a secure private network between your devices using WireGuard protocol, making them appear as if they're on the same local network regardless of their physical location.
+
+Get it at https://tailscale.com/
+
+Their installation instructions are super simple and they have an app for both desktop and phone. Once you have Tailscale installed, you can access it via your VPN ip address or machine name.
 
 
----
+# Hope you found this useful. Have fun!
+
+***
 
 # Updating
 
 Things move quickly especially with OpenWebUI releases.
 
-## Update OpenWebUI
+### Updating OpenWebUI
 
 ```bash
 
 # Pull the latest Open WebUI Docker image
-sudo docker pull ghcr.io/open-webui/open-webui:main
+docker pull ghcr.io/open-webui/open-webui:main
 
 # Stop the existing Open WebUI container if it's running
-sudo docker stop open-webui
+docker stop open-webui
 
 # Remove the existing Open WebUI container
-sudo docker rm open-webui
+docker rm open-webui
 
 # Run a new Open WebUI container
-sudo docker run -d \
+docker run -d \
   -p 3000:8080 \
   --add-host=host.docker.internal:host-gateway \
   -v open-webui:/app/backend/data \
@@ -322,26 +360,28 @@ echo "Open WebUI Docker container has been updated and started."
 
 echo "Pruning old images and containers"
 
-sudo docker container prune
-sudo docker image prune -a
+docker container prune
+docker image prune -a
 
 ```
 
-## Update KokoroTTS-FastAPI
+***
+
+### Update KokoroTTS-FastAPI
 
 ```bash
 
 # Pull the latest kokoro Docker image
-sudo docker pull ghcr.io/remsky/kokoro-fastapi-cpu:latest
+docker pull ghcr.io/remsky/kokoro-fastapi-cpu:latest
 
 # Stop the existing kokoro container if it's running
-sudo docker stop kokorotts-fastapi
+docker stop kokorotts-fastapi
 
 # Remove the existing kokoro container
-sudo docker rm kokorotts-fastapi
+docker rm kokorotts-fastapi
 
 # Run a new kokoro container
-sudo docker run -d \
+docker run -d \
   -p 8880:8880 \
   --add-host=host.docker.internal:host-gateway \
   --name kokorotts-fastapi \
@@ -352,7 +392,7 @@ echo "Kokoro container has been updated and started."
 
 echo "Pruning old images and containers"
 
-sudo docker container prune
-sudo docker image prune -a
+docker container prune
+docker image prune -a
 
 ```
