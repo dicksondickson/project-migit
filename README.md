@@ -246,9 +246,7 @@ btop
 ```
 
 
-### Monitor your AI Server Remotely vis SSH
-
-
+### Monitor your AI Server Remotely via SSH
 
 Install SSH server:
 ```bash
@@ -262,7 +260,6 @@ ssh user@[your-computer-name]
 ```
 
 Then run btop.
-
 
 
 ***
