@@ -139,6 +139,9 @@ Add yourself to the docker group so you don't need to type 'sudo' all the time:
 sudo usermod -aG docker $USER
 ```
 
+You need to logout and log back in to your account for this to take effect.
+
+
 Clean up Docker images and containers:
 ```bash
 # Remove stopped containers
